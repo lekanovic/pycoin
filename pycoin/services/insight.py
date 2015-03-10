@@ -104,6 +104,14 @@ class InsightService(object):
             logging.exception("problem in send_tx %s", tx.id())
             raise ex
 
+    def is_address_used(self, bitcoin_address):
+        """
+        Return True if the bitcoin_address never has been
+        part of a transaction.
+        """
+        URL = "%s/api/addr/%s" % (self.base_url, bitcoin_address)
+        r = json.loads(urlopen(URL).read().decode("utf8"))
+        return len(r['transactions']) != 0
 
 def tx_from_json_dict(r):
     version = r.get("version")
