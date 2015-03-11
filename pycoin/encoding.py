@@ -197,7 +197,7 @@ def wif_to_tuple_of_secret_exponent_compressed(wif, allowable_wif_prefixes=[b'\x
     return secret_exponent, is_compressed
 
 
-def wif_to_secret_exponent(wif, allowable_wif_prefixes=[b'\x80']):
+def wif_to_secret_exponent(wif, allowable_wif_prefixes=[b'\x80', b'\xef']):
     """Convert a WIF string to the corresponding secret exponent."""
     return wif_to_tuple_of_secret_exponent_compressed(wif, allowable_wif_prefixes=allowable_wif_prefixes)[0]
 
