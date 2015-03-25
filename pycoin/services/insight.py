@@ -118,6 +118,19 @@ class InsightService(object):
         r = json.loads(urlopen(URL).read().decode("utf8"))
         return len(r['transactions']) != 0
 
+    def has_unconfirmed_balance(self, bitcoin_addresses):
+        """
+        Return True if any of the bitcoin addresses has unconfirmed
+        balance. False otherwise
+        """
+        for addr in bitcoin_addresses:
+            URL = "%s/api/addr/%s/unconfirmedBalance" % (self.base_url, addr)
+            r = json.loads(urlopen(URL).read().decode("utf8"))
+            if r > 0:
+                return True
+        return False
+
+
 def tx_from_json_dict(r):
     version = r.get("version")
     lock_time = r.get("locktime")
