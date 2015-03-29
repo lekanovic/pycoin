@@ -75,7 +75,7 @@ class InsightService(object):
         Return a list of Spendable objects for the
         given bitcoin address.
         """
-        URL = "%s/api/addr/%s/utxo" % (self.base_url, bitcoin_address)
+        URL = "%s/api/addr/%s/utxo?noCache=1" % (self.base_url, bitcoin_address)
         r = json.loads(urlopen(URL).read().decode("utf8"))
         spendables = []
         for u in r:
@@ -83,7 +83,8 @@ class InsightService(object):
             script = h2b(u.get("scriptPubKey"))
             previous_hash = h2b_rev(u.get("txid"))
             previous_index = u.get("vout")
-            spendables.append(Spendable(coin_value, script, previous_hash, previous_index))
+            confirmations = u.get("confirmations")
+            spendables.append(Spendable(coin_value, script, previous_hash, previous_index,confirmations=confirmations))
         return spendables
 
     def spendables_for_addresses(self, bitcoin_addresses):
