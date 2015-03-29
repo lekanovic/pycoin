@@ -8,7 +8,7 @@ from .TxOut import TxOut
 
 class Spendable(TxOut):
     def __init__(self, coin_value, script, tx_hash, tx_out_index, block_index_available=0,
-                 does_seem_spent=False, block_index_spent=0):
+                 does_seem_spent=False, block_index_spent=0, confirmations=0):
         self.coin_value = int(coin_value)
         self.script = script
         self.tx_hash = tx_hash
@@ -16,6 +16,7 @@ class Spendable(TxOut):
         self.block_index_available = block_index_available
         self.does_seem_spent = int(does_seem_spent)
         self.block_index_spent = block_index_spent
+        self.confirmations = confirmations
 
     def stream(self, f, as_spendable=False):
         super(Spendable, self).stream(f)
