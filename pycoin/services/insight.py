@@ -88,9 +88,17 @@ class InsightService(object):
         return spendables
 
     def spendables_for_addresses(self, bitcoin_addresses):
+        addresses = ','.join(bitcoin_addresses)
+        URL = "%s/api/addrs/%s/utxo?noCache=1" % (self.base_url, addresses)
+        r = json.loads(urlopen(URL).read().decode("utf8"))
         spendables = []
-        for addr in bitcoin_addresses:
-            spendables.extend(self.spendables_for_address(addr))
+        for u in r:
+            coin_value = btc_to_satoshi(str(u.get("amount")))
+            script = h2b(u.get("scriptPubKey"))
+            previous_hash = h2b_rev(u.get("txid"))
+            previous_index = u.get("vout")
+            confirmations = u.get("confirmations")
+            spendables.append(Spendable(coin_value, script, previous_hash, previous_index,confirmations=confirmations))
         return spendables
 
     def send_tx(self, tx):
