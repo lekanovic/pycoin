@@ -33,6 +33,7 @@ from ..serialize.bitcoin_streamer import parse_struct, stream_struct
 
 from .script.tools import disassemble, opcode_list
 from .script.vm import verify_script
+from ..networks import address_prefix_for_netcode
 
 ZERO = b'\0' * 32
 
@@ -63,7 +64,7 @@ class TxIn(object):
     def is_coinbase(self):
         return self.previous_hash == ZERO
 
-    def bitcoin_address(self, address_prefix=b'\0'):
+    def bitcoin_address(self, netcode='BTC'):
         if self.is_coinbase():
             return "(coinbase)"
         # attempt to return the source address, or None on failure
@@ -71,6 +72,7 @@ class TxIn(object):
         if len(opcodes) == 2 and opcodes[0].startswith("30"):
             # the second opcode is probably the public key as sec
             sec = h2b(opcodes[1])
+            address_prefix = address_prefix_for_netcode(netcode)
             bitcoin_address = encoding.hash160_sec_to_bitcoin_address(
                 encoding.hash160(sec), address_prefix=address_prefix)
             return bitcoin_address
