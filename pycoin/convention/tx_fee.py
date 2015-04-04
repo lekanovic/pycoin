@@ -1,7 +1,7 @@
 import io
 
 TX_FEE_PER_THOUSAND_BYTES = 10000
-TRESH_HOLD = 57600000
+
 
 def recommended_fee_for_tx(tx):
     """
@@ -26,7 +26,12 @@ def recommended_fee_for_tx(tx):
 
     size_bytes = ((in_tx*148) + (out_tx*32) + 10)
 
-    priority = (sum(t.coin_value * t.confirmations for t in tx.unspents)) / size_bytes
+    priority = 0
+
+    try:
+        priority = (sum(t.coin_value * t.confirmations for t in tx.unspents)) / size_bytes
+    except TypeError:
+        pass
 
     tx_byte_count = len(s.getvalue())
 
