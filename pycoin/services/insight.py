@@ -70,6 +70,15 @@ class InsightService(object):
             return tx
         return None
 
+    def get_tx_dict(self, tx_hash):
+        d = {}
+        URL = "%s/api/tx/%s" % (self.base_url, tx_hash)
+        r = json.loads(urlopen(URL).read().decode("utf8"))
+        d['confirmations'] = r['confirmations']
+        d['fee'] = btc_to_satoshi(r['fees'])
+        d['amount'] = btc_to_satoshi(r['valueIn'])
+        return d
+
     def get_tx_confirmation_block(self, tx_hash):
         return self.get_tx(tx_hash).confirmation_block_hash
 
