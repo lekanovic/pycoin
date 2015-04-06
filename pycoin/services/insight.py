@@ -71,7 +71,10 @@ class InsightService(object):
         d = {}
         URL = "%s/api/tx/%s" % (self.base_url, tx_hash)
         r = json.loads(urlopen(URL).read().decode("utf8"))
-        d['confirmations'] = r['confirmations']
+        try:
+            d['confirmations'] = r['confirmations']
+        except KeyError:
+            d['confirmations'] = -1
         d['fee'] = btc_to_satoshi(r['fees'])
         d['amount'] = btc_to_satoshi(r['valueIn'])
         return d
