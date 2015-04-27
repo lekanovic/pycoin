@@ -81,7 +81,7 @@ class TxIn(object):
         # attempt to return the source address
         sec = self.public_key_sec()
         if sec:
-			address_prefix = address_prefix_for_netcode(netcode)
+            address_prefix = address_prefix_for_netcode(netcode)
             bitcoin_address = encoding.hash160_sec_to_bitcoin_address(
                 encoding.hash160(sec), address_prefix=address_prefix)
             return bitcoin_address
