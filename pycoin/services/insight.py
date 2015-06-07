@@ -22,8 +22,6 @@ from pycoin.serialize import b2h, b2h_rev, h2b, h2b_rev
 from pycoin.tx.script import tools
 from pycoin.tx import Spendable, Tx, TxIn, TxOut
 
-logger = logging.getLogger(__name__)
-
 
 class InsightService(object):
     def __init__(self, base_url):
@@ -74,7 +72,10 @@ class InsightService(object):
         d = {}
         URL = "%s/api/tx/%s" % (self.base_url, tx_hash)
         r = json.loads(urlopen(URL).read().decode("utf8"))
-        d['confirmations'] = r['confirmations']
+        try:
+            d['confirmations'] = r['confirmations']
+        except KeyError:
+            d['confirmations'] = -1
         d['fee'] = btc_to_satoshi(r['fees'])
         d['amount'] = btc_to_satoshi(r['valueIn'])
         return d
@@ -114,7 +115,6 @@ class InsightService(object):
         return spendables
 
     def send_tx(self, tx):
-        # TODO: make this handle errors better
         s = io.BytesIO()
         tx.stream(s)
         tx_as_hex = b2h(s.getvalue())
@@ -123,9 +123,10 @@ class InsightService(object):
         try:
             d = urlopen(URL, data=data).read()
             return d
-        except HTTPError as ex:
-            logger.exception("problem in send_tx %s", tx.id())
-            raise ex
+        except HTTPError as err:
+            if err.code == 400:
+                raise ValueError(err.readline())
+            raise err
 
     def is_address_used(self, bitcoin_address):
         """
