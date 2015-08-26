@@ -83,6 +83,21 @@ class InsightService(object):
     def get_tx_confirmation_block(self, tx_hash):
         return self.get_tx(tx_hash).confirmation_block_hash
 
+    def address_received(self, bitcoin_address):
+        URL = "%s/api/addr/%s/totalReceived" % (self.base_url, bitcoin_address)
+        r = json.loads(urlopen(URL).read().decode("utf8"))
+        return r
+
+    def address_sent(self, bitcoin_address):
+        URL = "%s/api/addr/%s/totalSent" % (self.base_url, bitcoin_address)
+        r = json.loads(urlopen(URL).read().decode("utf8"))
+        return r
+
+    def address_balance(self, bitcoin_address):
+        URL = "%s/api/addr/%s/balance" % (self.base_url, bitcoin_address)
+        r = json.loads(urlopen(URL).read().decode("utf8"))
+        return r
+
     def spendables_for_address(self, bitcoin_address):
         """
         Return a list of Spendable objects for the
