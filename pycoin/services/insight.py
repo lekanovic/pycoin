@@ -98,6 +98,11 @@ class InsightService(object):
         r = json.loads(urlopen(URL).read().decode("utf8"))
         return r
 
+    def address_unconfirmed_balance(self, bitcoin_address):
+        URL = "%s/api/addr/%s/unconfirmedBalance" % (self.base_url, bitcoin_address)
+        r = json.loads(urlopen(URL).read().decode("utf8"))
+        return r
+
     def spendables_for_address(self, bitcoin_address):
         """
         Return a list of Spendable objects for the
